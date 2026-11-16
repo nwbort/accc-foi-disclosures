@@ -20,7 +20,7 @@ disclosures/
   2026-2027/           grouped by the year in the ACCC reference number
     100482/            the request number
       README.md        title, description, dates, links to documents
-      metadata.json    full metadata (source URLs, sizes, first/last seen)
+      metadata.json    full metadata (source URLs, sizes, date first archived)
       ACCC FOI Request 100482-2026-2027-Document 1.pdf
       ...
   2018/proactive-A/    "ACCC Proactive Disclosure A/2018"

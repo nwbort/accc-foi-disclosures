@@ -209,7 +209,6 @@ def archive(entry: dict, today: str, download: bool = True) -> tuple[dict, int]:
         "year": year,
         "path": str(d.relative_to(ROOT)),
         "first_seen": old.get("first_seen", today),
-        "last_seen": today,
     }
     used_names = {f["local"] for f in old_files.values() if f.get("local")}
     files, downloaded = [], 0
