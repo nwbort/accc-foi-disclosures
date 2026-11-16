@@ -1,0 +1,27 @@
+{
+  "title": "ACCC FOI Request 42/2012",
+  "url": "https://www.accc.gov.au/about-us/freedom-of-information/freedom-of-information-disclosure-log/accc-foi-request-422012",
+  "description": null,
+  "post_date": "2012-05-18",
+  "date_of_access": null,
+  "files": [
+    {
+      "title": "ACCC FOI Request 42-2012 - Document 1.xls",
+      "size": "63.5 KB",
+      "url": "https://www.accc.gov.au/system/files/foi_disclosure_documents/ACCC%20FOI%20Request%2042-2012%20-%20Document%201.xls",
+      "local": "ACCC FOI Request 42-2012 - Document 1.xls",
+      "downloaded": "2026-11-16"
+    },
+    {
+      "title": "ACCC FOI Request 42-2012 - Document 2.xls",
+      "size": "57 KB",
+      "url": "https://www.accc.gov.au/system/files/foi_disclosure_documents/ACCC%20FOI%20Request%2042-2012%20-%20Document%202.xls",
+      "local": "ACCC FOI Request 42-2012 - Document 2.xls",
+      "downloaded": "2026-11-16"
+    }
+  ],
+  "id": "42",
+  "year": "2012",
+  "path": "disclosures/2012/42",
+  "first_seen": "2026-11-16"
+}
