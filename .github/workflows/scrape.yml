@@ -1,0 +1,52 @@
+name: Scrape ACCC FOI disclosure log
+
+on:
+  schedule:
+    - cron: "17 20 * * 0" # weekly, Sunday 20:17 UTC (Monday morning AEST)
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scrape
+  cancel-in-progress: false
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scraper/requirements.txt
+
+      - run: pip install -r scraper/requirements.txt
+
+      - name: Scrape and download new documents
+        run: python scraper/scrape.py | tee scrape.log
+
+      - name: Commit and push (one commit per year folder to keep pushes small)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          summary=$(grep -E '^New disclosures' scrape.log || true)
+          push() { for i in 1 2 3 4; do git push && return 0; sleep $((i*10)); git pull --rebase; done; return 1; }
+          for dir in disclosures/*/; do
+            git add "$dir"
+            if ! git diff --cached --quiet; then
+              git commit -q -m "Update $(basename "$dir") disclosures" -m "$summary"
+              push
+            fi
+          done
+          git add disclosures
+          if ! git diff --cached --quiet; then
+            git commit -q -m "Update disclosure index ($(date -u +%F))" -m "$summary"
+            push
+          fi
+          echo "### $summary" >> "$GITHUB_STEP_SUMMARY"
+          grep -E '^  \+ ' scrape.log >> "$GITHUB_STEP_SUMMARY" || true
