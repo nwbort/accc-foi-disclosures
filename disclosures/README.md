@@ -7,7 +7,7 @@
 | 2026-11-16 | [ACCC FOI Request 100474/2026-2027](<2026-2027/100474/>) | Correspondence from ACCC to Treasury in relation to Schedule 4 of the Treasury Laws Amendment (Strengthening Accountability for Tax Advis… | 1 |
 | 2026-10-20 | [ACCC FOI Request 100473/2026-2027](<2026-2027/100473/>) | Documents regarding Notification Waiver Determination | 21 |
 | 2026-10-12 | [ACCC FOI Request 100472/2026-2027](<2026-2027/100472/>) | Correspondence with Qantas | 2 |
-| 2026-10-09 | [ACCC FOI Request 100460/2026-2027](<2026-2027/100460/>) | "Celebrity Scam Intelligence” project | 19 |
+| 2026-10-09 | [ACCC FOI Request 100460/2026-2027](<2026-2027/100460/>) | "Celebrity Scam Intelligence” project | 38 |
 | 2026-10-06 | [ACCC FOI Request 100485/2026-2027](<2026-2027/100485/>) | Drip pricing related reports | 1 |
 | 2026-10-02 | [ACCC FOI Request 100482/2026-2027](<2026-2027/100482/>) | APS Strategic Commissioning Framework - Core Job Functions | 2 |
 | 2026-10-02 | [ACCC FOI Request 100475/2026-2027](<2026-2027/100475/>) | Keywords: Correspondence, N10000501 | 19 |
