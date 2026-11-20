@@ -28,6 +28,8 @@ jobs:
       - run: pip install -r scraper/requirements.txt
 
       - name: Scrape and download new documents
+        env:
+          NTFY: ${{ secrets.NTFY }} # ntfy topic (or full URL) for merger notification/waiver disclosures
         run: python scraper/scrape.py | tee scrape.log
 
       - name: Commit and push (one commit per year folder to keep pushes small)

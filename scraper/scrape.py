@@ -19,6 +19,7 @@ from __future__ import annotations
 import argparse
 import datetime as dt
 import json
+import os
 import re
 import sys
 import time
@@ -251,6 +252,49 @@ def archive(entry: dict, today: str, download: bool = True) -> tuple[dict, int]:
     return meta, downloaded
 
 
+# Disclosures about the merger notification regime (notifications and waivers).
+# Deliberately narrow: must not match e.g. "FOI fee waivers" or "Early Patentee Notification".
+MERGER_NOTIFICATION = re.compile(
+    r"\bnotification\s+waiver"
+    r"|\bwaiver\s+(?:determination|application|decision)"
+    r"|\bmerger\s+(?:notification|waiver)"
+    r"|\b(?:acquisition|merger)s?\s+notifi"
+    r"|\bnotified\s+(?:merger|acquisition)",
+    re.I,
+)
+
+
+def is_merger_notification(meta: dict) -> bool:
+    return bool(MERGER_NOTIFICATION.search(" ".join(filter(None, [meta.get("title"), meta.get("description")]))))
+
+
+def ntfy(meta: dict) -> None:
+    """Push a notification for a new disclosure to the ntfy topic in $NTFY (topic name or full URL)."""
+    target = os.environ.get("NTFY", "").strip()
+    if not target:
+        print(f"  (NTFY not set; would notify: {meta['title']})")
+        return
+    url = target if target.startswith(("http://", "https://")) else f"https://ntfy.sh/{target}"
+    body = meta.get("description") or meta["title"]
+    files = len(meta.get("files", []))
+    body += f"\n{files} document{'s' if files != 1 else ''}"
+    try:
+        r = requests.post(
+            url,
+            data=body.encode("utf-8"),
+            headers={
+                "Title": f"ACCC FOI: {meta['title']}".encode("utf-8"),
+                "Tags": "scales",
+                "Click": meta["url"],
+            },
+            timeout=30,
+        )
+        r.raise_for_status()
+        print(f"  notified: {meta['title']}")
+    except requests.RequestException as e:
+        print(f"  ntfy FAILED for {meta['title']}: {e}", file=sys.stderr)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--max-pages", type=int, help="only scan this many listing pages")
@@ -273,7 +317,7 @@ def main() -> int:
         meta, n = archive(e, today, download=not args.no_download)
         total_dl += n
         if is_new:
-            new_disclosures.append(meta["title"])
+            new_disclosures.append(meta)
         index[meta["path"]] = meta
 
     # Disclosures no longer on the site: keep them, mark as removed.
@@ -301,8 +345,11 @@ def main() -> int:
     write_index_md(rows)
 
     print(f"New disclosures: {len(new_disclosures)}; files downloaded: {total_dl}")
-    for t in new_disclosures:
-        print(f"  + {t}")
+    for m in new_disclosures:
+        print(f"  + {m['title']}")
+    for m in new_disclosures:
+        if is_merger_notification(m):
+            ntfy(m)
     return 0
 
 
