@@ -17,7 +17,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 240
     steps:
+      # Skip the ~1.4 GB of archived documents: fetch no file contents up front
+      # (blob:none) and only check out code + metadata. The scraper relies on
+      # metadata.json to know what is already archived.
       - uses: actions/checkout@v7
+        with:
+          filter: blob:none
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            /*
+            !/disclosures/*/*/*
+            /disclosures/*/*/metadata.json
+            /disclosures/*/*/README.md
 
       - uses: actions/setup-python@v7
         with:
@@ -39,13 +50,13 @@ jobs:
           summary=$(grep -E '^New disclosures' scrape.log || true)
           push() { for i in 1 2 3 4; do git push && return 0; sleep $((i*10)); git pull --rebase; done; return 1; }
           for dir in disclosures/*/; do
-            git add "$dir"
+            git add --sparse "$dir"
             if ! git diff --cached --quiet; then
               git commit -q -m "Update $(basename "$dir") disclosures" -m "$summary"
               push
             fi
           done
-          git add disclosures
+          git add --sparse disclosures
           if ! git diff --cached --quiet; then
             git commit -q -m "Update disclosure index ($(date -u +%F))" -m "$summary"
             push

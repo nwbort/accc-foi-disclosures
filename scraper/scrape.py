@@ -10,8 +10,10 @@ Layout produced:
         README.md                   # human-readable summary with links to files
         <document files>
 
-Re-running is incremental: files already on disk (matched by source URL) are
-not downloaded again. Disclosures that vanish from the ACCC site are kept.
+Re-running is incremental: files already recorded in metadata.json (matched by
+source URL) are not downloaded again, so the documents themselves need not be
+checked out (CI uses a sparse checkout without them). Disclosures and files that
+vanish from the ACCC site are kept and flagged.
 """
 
 from __future__ import annotations
@@ -167,11 +169,23 @@ def write_readme(d: Path, meta: dict) -> None:
         "## Documents",
         "",
     ]
-    for f in meta["files"]:
+    def line(f: dict) -> str:
         if f.get("local"):
-            lines.append(f"- [{f['title']}](<{f['local']}>) ({f.get('size') or '?'})")
-        else:
-            lines.append(f"- {f['title']} — not downloaded ({f.get('error', 'missing')}) <{f['url']}>")
+            return f"- [{f['title']}](<{f['local']}>) ({f.get('size') or '?'})"
+        return f"- {f['title']} — not downloaded ({f.get('error', 'missing')}) <{f['url']}>"
+
+    current = [f for f in meta["files"] if not f.get("removed_from_site")]
+    removed = [f for f in meta["files"] if f.get("removed_from_site")]
+    lines += [line(f) for f in current]
+    if removed:
+        lines += [
+            "",
+            "## Superseded or removed documents",
+            "",
+            "Earlier versions no longer linked from the ACCC page (often replaced by a re-issued file).",
+            "",
+        ]
+        lines += [line(f) + f" — removed {f['removed_from_site']}" for f in removed]
     if meta.get("removed_from_site"):
         lines += ["", f"_No longer listed on the ACCC site as of {meta['removed_from_site']}._"]
     (d / "README.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -216,7 +230,7 @@ def archive(entry: dict, today: str, download: bool = True) -> tuple[dict, int]:
     for f in entry["files"]:
         rec = dict(f)
         prev = old_files.get(f["url"])
-        if prev and prev.get("local") and (d / prev["local"]).exists():
+        if prev and prev.get("local"):
             rec["local"] = prev["local"]
             rec["downloaded"] = prev.get("downloaded")
         elif download:
