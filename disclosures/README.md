@@ -1,9 +1,10 @@
 # ACCC FOI disclosure log archive
 
-244 disclosures. Source: <https://www.accc.gov.au/about-us/freedom-of-information/freedom-of-information-disclosure-log>
+245 disclosures. Source: <https://www.accc.gov.au/about-us/freedom-of-information/freedom-of-information-disclosure-log>
 
 | Post date | Disclosure | Description | Files |
 |---|---|---|---|
+| 2026-11-25 | [ACCC FOI Request 100471/2026-2027](<2026-2027/100471/>) | Keywords: NBN Co, 87B undertaking | 1 |
 | 2026-11-16 | [ACCC FOI Request 100474/2026-2027](<2026-2027/100474/>) | Correspondence from ACCC to Treasury in relation to Schedule 4 of the Treasury Laws Amendment (Strengthening Accountability for Tax Advis… | 1 |
 | 2026-10-20 | [ACCC FOI Request 100473/2026-2027](<2026-2027/100473/>) | Documents regarding Notification Waiver Determination | 21 |
 | 2026-10-12 | [ACCC FOI Request 100472/2026-2027](<2026-2027/100472/>) | Correspondence with Qantas | 2 |
